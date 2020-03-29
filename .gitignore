@@ -1,3 +1,9 @@
 # idea
 .idea/**
 healthcheck.iml
+
+# build
+target/**
+
+# logs
+logs/**
