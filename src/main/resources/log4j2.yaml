@@ -1,5 +1,5 @@
 Configutation:
-  name: Default
+  name: logger
 
   Properties:
     Property:
@@ -42,9 +42,9 @@ Configutation:
         level: debug
         AppenderRef:
           - ref: ConsoleAppender
-      Logger:
+      logger:
         - name: com.bilalekrem.healthcheck
           level: debug
           AppenderRef:
             - ref: RollingFileAppender
-              level: info
+              level: debug
