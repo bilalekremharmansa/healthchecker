@@ -11,18 +11,19 @@ import io.netty.handler.codec.http.HttpObjectAggregator
 import io.netty.handler.codec.http.HttpServerCodec
 
 import org.apache.logging.log4j.LogManager
+import java.net.InetSocketAddress
 
 import java.util.logging.Level
 import java.util.logging.Logger
 
-class HttpTestServer(private val port: Int) {
+class HttpTestServer() {
 
     private val logger = LogManager.getLogger()
 
     private val serverContext: HttpServerContext = HttpServerContext()
 
     private val bootstrap: ServerBootstrap = ServerBootstrap()
-    private lateinit var bootstrapChannel: Channel
+    private var bootstrapChannel: Channel? = null
 
     private val bossGroup = NioEventLoopGroup(1)
     private val workerGroup = NioEventLoopGroup(10)
@@ -42,19 +43,30 @@ class HttpTestServer(private val port: Int) {
                 })
     }
 
-    fun start() {
-        bootstrapChannel = bootstrap
-                .bind(port)
-                .sync()
-                .channel()
+    fun start(port: Int) {
+        bootstrapChannel?:let {
+            bootstrapChannel = bootstrap
+                    .bind(port)
+                    .sync()
+                    .channel()
 
-        logger.info("HttpServer is started -- port: {}", port)
+            logger.info("HttpServer is started -- port: {}", port)
+        } ?: logger.warn("Server is already running on port [{}]", (bootstrapChannel?.localAddress() as InetSocketAddress).port)
     }
 
     fun stop() {
-        logger.info("HttpServer is shutting down")
+        bootstrapChannel?.let {
+            logger.info("HttpServer is shutting down")
+            if (it.isOpen) {
+                it.close().sync()
+            }
+        } ?: logger.info("HttpServer is not running")
+    }
 
-        bootstrapChannel.close().sync()
+    fun close() {
+        logger.info("HttpServer is closing")
+
+        stop()
 
         bossGroup.shutdownGracefully()
         workerGroup.shutdownGracefully()
