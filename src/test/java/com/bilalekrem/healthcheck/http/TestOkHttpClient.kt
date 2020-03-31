@@ -2,7 +2,9 @@ package com.bilalekrem.healthcheck.http
 
 import com.bilalekrem.healthcheck.http.client.okhttp.OkHttpClient
 import com.bilalekrem.healthcheck.netty.BaseTestHttpServer
-import com.bilalekrem.healthcheck.netty.server.HttpServerContext
+import com.bilalekrem.healthcheck.netty.server.EchoResponse
+import com.bilalekrem.healthcheck.netty.server.StringResponse
+import com.bilalekrem.healthcheck.util.JSON
 
 import io.netty.handler.codec.http.HttpMethod
 import io.netty.handler.codec.http.HttpResponseStatus
@@ -16,7 +18,7 @@ class TestOkHttpClient: BaseTestHttpServer() {
 
     @Test
     fun testGetMethod() {
-        map(HttpMethod.GET, "/hello", HttpServerContext.MockResponse(
+        map(HttpMethod.GET, "/hello", StringResponse (
                 HttpResponseStatus.OK, """{"echo":"hello"}"""
         ))
 
@@ -47,27 +49,27 @@ class TestOkHttpClient: BaseTestHttpServer() {
     }
 
     @Test
-    fun testPostMethod() {
-        map(HttpMethod.GET, "/hello", HttpServerContext.MockResponse(
-                HttpResponseStatus.OK, """{"echo":"hello"}"""
-        ))
+    fun testEchoResponse() {
+        map(HttpMethod.POST, "/hello", EchoResponse())
 
         start(port)
 
         // --
+
+        val body = """{"echo":"hello"}"""
 
         val client = OkHttpClient()
         val request = HttpRequest
                 .Builder()
                 .uri("http://127.0.0.1:$port/hello")
                 .method(com.bilalekrem.healthcheck.http.HttpMethod.POST)
+                .body(body)
                 .build()
 
-        val response = client.get<Map<String, String>>(request)
+        val response: HttpResponse<Map<String, String>> = client.get(request)
 
-        assert(response.statusCode !in 200..399)
+        assert(response.statusCode in 200..399)
+        assertEquals(response.body.toString(), body)
     }
-
-
 
 }

@@ -2,7 +2,7 @@ package com.bilalekrem.healthcheck.netty.server
 
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
-import io.netty.handler.codec.http.HttpRequest
+import io.netty.handler.codec.http.FullHttpRequest
 import org.apache.logging.log4j.LogManager
 
 class HttpServerHandler (private val serverContext: HttpServerContext): SimpleChannelInboundHandler<Any>() {
@@ -10,13 +10,9 @@ class HttpServerHandler (private val serverContext: HttpServerContext): SimpleCh
     private val logger = LogManager.getLogger()
 
     override fun channelRead0(ctx: ChannelHandlerContext?, obj: Any?) {
-        if (obj is HttpRequest) {
-            val request = obj as HttpRequest
+        if (obj is FullHttpRequest) {
 
-            val method = request.method()
-            val uri = request.uri()
-
-            val response = serverContext.responseAsNettyResponse(method, uri)
+            val response = serverContext.responseAsNettyResponse(obj)
 
             ctx?.writeAndFlush(response);
             ctx?.close()

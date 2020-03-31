@@ -1,6 +1,5 @@
 package com.bilalekrem.healthcheck.json
 
-
 import com.bilalekrem.healthcheck.util.JSON
 import org.apache.logging.log4j.LogManager
 import org.junit.jupiter.api.Test

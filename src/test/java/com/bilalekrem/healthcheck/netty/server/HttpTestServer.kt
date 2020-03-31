@@ -13,9 +13,6 @@ import io.netty.handler.codec.http.HttpServerCodec
 import org.apache.logging.log4j.LogManager
 import java.net.InetSocketAddress
 
-import java.util.logging.Level
-import java.util.logging.Logger
-
 class HttpTestServer() {
 
     private val logger = LogManager.getLogger()
@@ -72,7 +69,7 @@ class HttpTestServer() {
         workerGroup.shutdownGracefully()
     }
 
-    fun map(method: HttpMethod, endpoint: String, response: HttpServerContext.MockResponse)
+    fun map(method: HttpMethod, endpoint: String, response: MockResponse)
             = serverContext.map(method, endpoint, response)
 
 }

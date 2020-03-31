@@ -1,7 +1,7 @@
 package com.bilalekrem.healthcheck.netty
 
-import com.bilalekrem.healthcheck.netty.server.HttpServerContext
 import com.bilalekrem.healthcheck.netty.server.HttpTestServer
+import com.bilalekrem.healthcheck.netty.server.MockResponse
 import io.netty.handler.codec.http.HttpMethod
 import org.junit.jupiter.api.AfterAll
 
@@ -12,15 +12,13 @@ open class BaseTestHttpServer {
 
         fun start(port: Int) = Thread(Runnable { server.start(port) }).start()
 
-        fun map(method: HttpMethod, endpoint: String, response: HttpServerContext.MockResponse)
+        fun map(method: HttpMethod, endpoint: String, response: MockResponse)
                 = server.map(method, endpoint, response)
-
-        fun close() = server.close()
 
         @AfterAll
         @JvmStatic
         fun closeServer() {
-            close()
+            server.close()
         }
     }
 

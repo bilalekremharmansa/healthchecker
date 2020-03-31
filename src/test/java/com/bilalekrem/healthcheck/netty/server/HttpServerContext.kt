@@ -1,12 +1,11 @@
 package com.bilalekrem.healthcheck.netty.server
 
-import io.netty.buffer.Unpooled
 import io.netty.handler.codec.http.*
-import java.nio.charset.Charset
+import java.lang.RuntimeException
 
 class HttpServerContext {
 
-    data class MockResponse(val status: HttpResponseStatus, val response: String, val headers: HttpHeaders? = null)
+    class MappingNotFoundException(message: String) : RuntimeException(message)
 
     private val mappings = hashMapOf<String, MockResponse>()
 
@@ -18,20 +17,13 @@ class HttpServerContext {
 
     private fun mockResponse(method: HttpMethod, endpoint: String) = mappings[getKey(method, endpoint)]
 
-    fun responseAsNettyResponse(method: HttpMethod, endpoint: String): HttpResponse {
-        val mockResponse = mockResponse(method, endpoint)
+    fun responseAsNettyResponse(request: FullHttpRequest): FullHttpResponse {
+        val method = request.method()
+        val uri = request.uri()
 
-        mockResponse?.let { mock ->
+        val mockResponse = mockResponse(method, uri)
 
-            val byteArray = mock.response.toByteArray(charset = Charset.forName("UTF-8"))
-
-            return DefaultFullHttpResponse(
-                    HttpVersion.HTTP_1_1,
-                    mock.status,
-                    Unpooled.wrappedBuffer(byteArray))
-        }
-
-        return DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.BAD_REQUEST)
+        return mockResponse?.response(request) ?: throw MappingNotFoundException("[$method] mapping not found: [$uri]")
     }
 
     private fun getKey(method: HttpMethod, endpoint: String) = "$endpoint $method"

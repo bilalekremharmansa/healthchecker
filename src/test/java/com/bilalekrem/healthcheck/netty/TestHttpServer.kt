@@ -2,8 +2,7 @@ package com.bilalekrem.healthcheck.netty
 
 import com.bilalekrem.healthcheck.core.TCPHealthChecker
 import com.bilalekrem.healthcheck.model.HealthStatus
-import com.bilalekrem.healthcheck.netty.server.HttpServerContext
-import com.bilalekrem.healthcheck.netty.server.HttpTestServer
+import com.bilalekrem.healthcheck.netty.server.StringResponse
 import io.netty.handler.codec.http.HttpMethod
 import io.netty.handler.codec.http.HttpResponseStatus
 import org.junit.jupiter.api.Test
@@ -28,7 +27,7 @@ class TestHttpServer: BaseTestHttpServer() {
     fun testHttpServerMap() {
         val port = 9999
 
-        map(HttpMethod.GET, "/hello", HttpServerContext.MockResponse(
+        map(HttpMethod.GET, "/hello", StringResponse (
                 HttpResponseStatus.OK, "echo hello"
         ))
 
