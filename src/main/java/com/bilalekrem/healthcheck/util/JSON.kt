@@ -15,5 +15,4 @@ class JSON {
         return mapper.readValue(json)
     }
 
-
 }

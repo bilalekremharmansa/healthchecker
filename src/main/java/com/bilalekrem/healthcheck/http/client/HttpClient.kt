@@ -4,14 +4,14 @@ import com.bilalekrem.healthcheck.http.HttpRequest
 import com.bilalekrem.healthcheck.http.HttpResponse
 
 
-interface HttpClient<T> {
+interface HttpClient {
 
-    fun get(request: HttpRequest): HttpResponse<T>
+    fun <T : Any> get(request: HttpRequest): HttpResponse<T>
 
-    fun post(request: HttpRequest): HttpResponse<T>
+    fun <T : Any> post(request: HttpRequest): HttpResponse<T>
 
-    fun put(request: HttpRequest): HttpResponse<T>
+    fun <T : Any> put(request: HttpRequest): HttpResponse<T>
 
-    fun delete(request: HttpRequest): HttpResponse<T>
+    fun <T : Any> delete(request: HttpRequest): HttpResponse<T>
 
 }

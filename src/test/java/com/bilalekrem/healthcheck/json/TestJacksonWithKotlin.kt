@@ -5,6 +5,7 @@ import com.bilalekrem.healthcheck.util.JSON
 import org.apache.logging.log4j.LogManager
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class TestJacksonWithKotlin {
 
@@ -24,5 +25,12 @@ class TestJacksonWithKotlin {
         assertEquals("{\"age\":1,\"name\":\"health checker\"}", json)
     }
 
+    @Test
+    fun testParseJson() {
+        val json = "{\"name\":\"health checker\"}"
 
+        val obj = JSON().parseJSON(json)
+
+        assertNotNull(obj)
+    }
 }
