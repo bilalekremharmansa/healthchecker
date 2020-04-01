@@ -72,4 +72,29 @@ class TestOkHttpClient: BaseTestHttpServer() {
         assertEquals(response.body.toString(), body)
     }
 
+    @Test
+    fun testResponseInHeader() {
+        map(HttpMethod.POST, "/hello", EchoResponse())
+
+        start(port)
+
+        // --
+
+        val body = """{"echo":"hello"}"""
+
+        val client = OkHttpClient()
+        val request = HttpRequest
+                .Builder()
+                .uri("http://127.0.0.1:$port/hello")
+                .method(com.bilalekrem.healthcheck.http.HttpMethod.POST)
+                .body(body)
+                .header("HttpClient", "OkHttp")
+                .build()
+
+        val response: HttpResponse<Map<String, String>> = client.get(request)
+
+        assert(response.statusCode in 200..399)
+        assertEquals(response.headers.get("HttpClient"), "OkHttp")
+    }
+
 }

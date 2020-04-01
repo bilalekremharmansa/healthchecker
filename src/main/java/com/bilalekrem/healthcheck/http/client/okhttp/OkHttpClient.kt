@@ -1,8 +1,6 @@
 package com.bilalekrem.healthcheck.http.client.okhttp
 
-import com.bilalekrem.healthcheck.http.HttpMethod
-import com.bilalekrem.healthcheck.http.HttpRequest
-import com.bilalekrem.healthcheck.http.HttpResponse
+import com.bilalekrem.healthcheck.http.*
 import com.bilalekrem.healthcheck.http.client.HttpClient
 import com.bilalekrem.healthcheck.http.client.exception.HttpMethodNotImplementedException
 import com.bilalekrem.healthcheck.util.JSON
@@ -10,6 +8,7 @@ import okhttp3.OkHttpClient as ok_OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
+import okhttp3.internal.toImmutableList
 
 
 class OkHttpClient: HttpClient {
@@ -49,16 +48,25 @@ class OkHttpClient: HttpClient {
             else -> throw HttpMethodNotImplementedException(request.method)
         }
 
-        request.headers.forEach { header -> builder.addHeader(header.name, header.value) }
+        for((name, value) in request.headers.entries() ) {
+            builder.addHeader(name, value)
+        }
 
         return builder.build()
     }
 
     private fun <T: Any> httpResponse(response: Response): HttpResponse<T> {
+        // map ( headerName -> headerName, headerValue )
+        val headers = HttpHeaders().apply {
+            response.headers.names().forEach { headerName ->
+                this.add(headerName, response.headers[headerName]!!)
+            }
+        }
+
         response.body?.let {
             if(it.contentLength() > 0) {
                 val obj =  JSON().parseJSON(it.string())
-                return HttpResponse(response.code, obj as T)
+                return HttpResponse(response.code, obj as T, headers)
             }
         }
 

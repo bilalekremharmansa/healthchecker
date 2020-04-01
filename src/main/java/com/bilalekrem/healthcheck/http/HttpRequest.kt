@@ -7,21 +7,20 @@ class HttpRequest private constructor(
         val method: HttpMethod,
         val uri: String,
         val timeout: Int,
-        val headers: List<HttpHeader>,
-        val body: Any? = null
-) {
+        val headers: HttpHeaders,
+        val body: Any? = null) {
 
     data class Builder(
             var method: HttpMethod = HttpMethod.GET,
             var uri: String? = null,
             var timeout: Int = 100, // 100 ms
-            var headers: List<HttpHeader> = listOf(),
+            var headers: HttpHeaders = HttpHeaders(),
             var body: Any? = null) {
 
         fun method(method: HttpMethod) = apply { this.method = method }
         fun uri(uri: String) = apply { this.uri = uri }
         fun timeout(timeout: Int) = apply { this.timeout = timeout }
-        fun headers(headers: List<HttpHeader>) = apply { this.headers = headers }
+        fun header(name: String, value: String) = apply { this.headers.add(name, value) }
         fun body(body: Any) = apply { this.body = body }
 
         fun build() =
