@@ -1,10 +1,11 @@
-package com.bilalekrem.healthcheck.http
+package com.bilalekrem.healthcheck.http.client
 
+import com.bilalekrem.healthcheck.http.HttpRequest
+import com.bilalekrem.healthcheck.http.HttpResponse
 import com.bilalekrem.healthcheck.http.client.okhttp.OkHttpClient
 import com.bilalekrem.healthcheck.netty.BaseTestHttpServer
 import com.bilalekrem.healthcheck.netty.server.EchoResponse
 import com.bilalekrem.healthcheck.netty.server.StringResponse
-import com.bilalekrem.healthcheck.util.JSON
 
 import io.netty.handler.codec.http.HttpMethod
 import io.netty.handler.codec.http.HttpResponseStatus
@@ -27,8 +28,7 @@ class TestOkHttpClient: BaseTestHttpServer() {
         // --
 
         val client = OkHttpClient()
-        val request = HttpRequest
-                .Builder()
+        val request = HttpRequest.Builder()
                 .uri("http://127.0.0.1:$port/hello")
                 .method(com.bilalekrem.healthcheck.http.HttpMethod.GET)
                 .build()
@@ -59,8 +59,7 @@ class TestOkHttpClient: BaseTestHttpServer() {
         val body = """{"echo":"hello"}"""
 
         val client = OkHttpClient()
-        val request = HttpRequest
-                .Builder()
+        val request = HttpRequest.Builder()
                 .uri("http://127.0.0.1:$port/hello")
                 .method(com.bilalekrem.healthcheck.http.HttpMethod.POST)
                 .body(body)
@@ -83,8 +82,7 @@ class TestOkHttpClient: BaseTestHttpServer() {
         val body = """{"echo":"hello"}"""
 
         val client = OkHttpClient()
-        val request = HttpRequest
-                .Builder()
+        val request = HttpRequest.Builder()
                 .uri("http://127.0.0.1:$port/hello")
                 .method(com.bilalekrem.healthcheck.http.HttpMethod.POST)
                 .body(body)

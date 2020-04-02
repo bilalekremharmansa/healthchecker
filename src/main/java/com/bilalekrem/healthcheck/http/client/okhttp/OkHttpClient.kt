@@ -70,7 +70,7 @@ class OkHttpClient: HttpClient {
             }
         }
 
-        return HttpResponse(response.code, null)
+        return HttpResponse(response.code, null, headers)
     }
 
 }
