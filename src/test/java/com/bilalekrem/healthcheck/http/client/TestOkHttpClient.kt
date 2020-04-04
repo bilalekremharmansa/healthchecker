@@ -35,7 +35,7 @@ class TestOkHttpClient: BaseTestHttpServer() {
 
         val response = client.get(request)
 
-        assert(response.statusCode in 200..399)
+        assertEquals(response.statusCode, HttpResponseStatus.OK.code())
 
         val body = response.body(Map::class)
 
@@ -64,7 +64,7 @@ class TestOkHttpClient: BaseTestHttpServer() {
 
         val response = client.get(request)
 
-        assert(response.statusCode in 200..399)
+        assertEquals(response.statusCode, HttpResponseStatus.OK.code())
         assertEquals(response.body(), body)
     }
 
@@ -88,7 +88,7 @@ class TestOkHttpClient: BaseTestHttpServer() {
 
         val response = client.get(request)
 
-        assert(response.statusCode in 200..399)
+        assertEquals(response.statusCode, HttpResponseStatus.OK.code())
         assertEquals(response.headers.get("HttpClient"), "OkHttp")
     }
 
