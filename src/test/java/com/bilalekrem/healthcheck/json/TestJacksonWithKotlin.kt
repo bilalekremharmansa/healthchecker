@@ -17,7 +17,7 @@ class TestJacksonWithKotlin {
 
         val person = Person(1, name="health checker")
 
-        val json = JSON().toJSON(person)
+        val json = JSON.toJSON(person)
 
         logger.info("json output of person object:\n${json}")
 
@@ -28,7 +28,7 @@ class TestJacksonWithKotlin {
     fun testParseJson() {
         val json = "{\"name\":\"health checker\"}"
 
-        val obj = JSON().parseJSON(json)
+        val obj = JSON.parseJSON(json)
 
         assertNotNull(obj)
     }

@@ -1,11 +1,11 @@
 package com.bilalekrem.healthcheck.http.client
 
 import com.bilalekrem.healthcheck.http.HttpRequest
-import com.bilalekrem.healthcheck.http.HttpResponse
 import com.bilalekrem.healthcheck.http.client.okhttp.OkHttpClient
 import com.bilalekrem.healthcheck.netty.BaseTestHttpServer
 import com.bilalekrem.healthcheck.netty.server.EchoResponse
 import com.bilalekrem.healthcheck.netty.server.StringResponse
+import com.bilalekrem.healthcheck.util.JSON
 
 import io.netty.handler.codec.http.HttpMethod
 import io.netty.handler.codec.http.HttpResponseStatus
@@ -33,19 +33,16 @@ class TestOkHttpClient: BaseTestHttpServer() {
                 .method(com.bilalekrem.healthcheck.http.HttpMethod.GET)
                 .build()
 
-        val response = client.get<Map<String, String>>(request)
+        val response = client.get(request)
 
         assert(response.statusCode in 200..399)
 
-        val body = response.body
+        val body = response.body(Map::class)
 
         // -- assert
 
-        body?.let {
-
-            assertEquals(body["echo"], "hello")
-            assertNotEquals(body["echo"], "hola")
-        } ?: assert(false)
+        assertEquals(body["echo"], "hello")
+        assertNotEquals(body["echo"], "hola")
     }
 
     @Test
@@ -56,7 +53,7 @@ class TestOkHttpClient: BaseTestHttpServer() {
 
         // --
 
-        val body = """{"echo":"hello"}"""
+        val body = JSON.toJSONNode("""{"age":10,"name":"sample-class-to-json-de/serialization"}""")
 
         val client = OkHttpClient()
         val request = HttpRequest.Builder()
@@ -65,10 +62,10 @@ class TestOkHttpClient: BaseTestHttpServer() {
                 .body(body)
                 .build()
 
-        val response: HttpResponse<Map<String, String>> = client.get(request)
+        val response = client.get(request)
 
         assert(response.statusCode in 200..399)
-        assertEquals(response.body.toString(), body)
+        assertEquals(response.body(), body)
     }
 
     @Test
@@ -79,7 +76,7 @@ class TestOkHttpClient: BaseTestHttpServer() {
 
         // --
 
-        val body = """{"echo":"hello"}"""
+        val body = JSON.toJSONNode("""{"echo":"hello"}""")
 
         val client = OkHttpClient()
         val request = HttpRequest.Builder()
@@ -89,7 +86,7 @@ class TestOkHttpClient: BaseTestHttpServer() {
                 .header("HttpClient", "OkHttp")
                 .build()
 
-        val response: HttpResponse<Map<String, String>> = client.get(request)
+        val response = client.get(request)
 
         assert(response.statusCode in 200..399)
         assertEquals(response.headers.get("HttpClient"), "OkHttp")

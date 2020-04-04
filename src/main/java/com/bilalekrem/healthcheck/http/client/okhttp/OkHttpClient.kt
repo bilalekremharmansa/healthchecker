@@ -8,25 +8,23 @@ import okhttp3.OkHttpClient as ok_OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
-import okhttp3.internal.toImmutableList
-
 
 class OkHttpClient: HttpClient {
 
     private val client: ok_OkHttpClient = ok_OkHttpClient()
-    private final val EMPTY_REQUEST_BODY = "".toRequestBody()
+    companion object val EMPTY_REQUEST_BODY = "".toRequestBody()
 
-    override fun <T : Any> get(request: HttpRequest): HttpResponse<T> = doHttpRequest(request)
+    override fun get(request: HttpRequest): HttpResponse = doHttpRequest(request)
 
-    override fun <T : Any> post(request: HttpRequest): HttpResponse<T> = doHttpRequest(request)
+    override fun post(request: HttpRequest): HttpResponse = doHttpRequest(request)
 
-    override fun <T : Any> put(request: HttpRequest): HttpResponse<T> = doHttpRequest(request)
+    override fun put(request: HttpRequest): HttpResponse = doHttpRequest(request)
 
-    override fun <T : Any> delete(request: HttpRequest): HttpResponse<T> = doHttpRequest(request)
+    override fun delete(request: HttpRequest): HttpResponse = doHttpRequest(request)
 
     // -- private functions
 
-    private fun <T : Any>  doHttpRequest(request: HttpRequest): HttpResponse<T> {
+    private fun doHttpRequest(request: HttpRequest): HttpResponse {
         val okHttpRequest: Request = buildOkHttpRequestObject(request)
 
         client.newCall(okHttpRequest).execute().use { response -> return httpResponse(response) }
@@ -41,7 +39,7 @@ class OkHttpClient: HttpClient {
             HttpMethod.GET -> builder.get()
             HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE -> {
                 request.body?.let {
-                    val body = JSON().toJSON(request.body)
+                    val body = JSON.toJSON(request.body)
                     builder.method(request.method.name ,body.toRequestBody())
                 } ?: builder.post(EMPTY_REQUEST_BODY)
             }
@@ -55,7 +53,7 @@ class OkHttpClient: HttpClient {
         return builder.build()
     }
 
-    private fun <T: Any> httpResponse(response: Response): HttpResponse<T> {
+    private fun httpResponse(response: Response): HttpResponse {
         // map ( headerName -> headerName, headerValue )
         val headers = HttpHeaders().apply {
             response.headers.names().forEach { headerName ->
@@ -64,13 +62,13 @@ class OkHttpClient: HttpClient {
         }
 
         response.body?.let {
-            if(it.contentLength() > 0) {
-                val obj =  JSON().parseJSON(it.string())
-                return HttpResponse(response.code, obj as T, headers)
+            val bytes = it.bytes()
+            if(bytes.isNotEmpty()) {
+                return HttpResponse(response.code, bytes, headers)
             }
         }
 
-        return HttpResponse(response.code, null, headers)
+        return HttpResponse(response.code, headers=headers)
     }
 
 }
