@@ -1,9 +1,9 @@
 package com.bilalekrem.healthcheck.http.client.okhttp
 
 import com.bilalekrem.healthcheck.http.*
+import com.bilalekrem.healthcheck.http.client.HttpBody
 import com.bilalekrem.healthcheck.http.client.HttpClient
 import com.bilalekrem.healthcheck.http.client.exception.HttpMethodNotImplementedException
-import com.bilalekrem.healthcheck.util.JSON
 import okhttp3.OkHttpClient as ok_OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -39,8 +39,7 @@ class OkHttpClient: HttpClient {
             HttpMethod.GET -> builder.get()
             HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE -> {
                 request.body?.let {
-                    val body = JSON.toJSON(request.body)
-                    builder.method(request.method.name ,body.toRequestBody())
+                    builder.method(request.method.name, it.content.toRequestBody())
                 } ?: builder.post(EMPTY_REQUEST_BODY)
             }
             else -> throw HttpMethodNotImplementedException(request.method)
@@ -61,14 +60,18 @@ class OkHttpClient: HttpClient {
             }
         }
 
-        response.body?.let {
-            val bytes = it.bytes()
-            if(bytes.isNotEmpty()) {
-                return HttpResponse(response.code, bytes, headers)
+        if (response.body != null) {
+            val rawBody = response.body!!.bytes()
+
+            // is this check required ?
+            if (rawBody.isNotEmpty()) {
+                val body = HttpBody.fromByteArray(rawBody)
+
+                return HttpResponse(response.code, body, headers)
             }
         }
 
-        return HttpResponse(response.code, headers=headers)
+        return HttpResponse(response.code, headers)
     }
 
 }

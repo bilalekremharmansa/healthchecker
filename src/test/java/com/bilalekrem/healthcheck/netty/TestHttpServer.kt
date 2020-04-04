@@ -4,13 +4,32 @@ import com.bilalekrem.healthcheck.core.TCPHealthChecker
 import com.bilalekrem.healthcheck.http.HttpRequest
 import com.bilalekrem.healthcheck.http.client.okhttp.OkHttpClient
 import com.bilalekrem.healthcheck.model.HealthStatus
+import com.bilalekrem.healthcheck.netty.server.HttpTestServer
+import com.bilalekrem.healthcheck.netty.server.MockResponse
 import com.bilalekrem.healthcheck.netty.server.StringResponse
 import io.netty.handler.codec.http.HttpMethod
 import io.netty.handler.codec.http.HttpResponseStatus
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test
+import java.nio.charset.Charset
 import kotlin.test.assertEquals
 
-class TestHttpServer: BaseTestHttpServer() {
+class TestHttpServer {
+
+    companion object {
+        private val server = HttpTestServer()
+
+        fun start(port: Int) = Thread(Runnable { server.start(port) }).start()
+
+        fun map(method: HttpMethod, endpoint: String, response: MockResponse)
+                = server.map(method, endpoint, response)
+
+        @AfterAll
+        @JvmStatic
+        fun closeServer() {
+            server.close()
+        }
+    }
 
     @Test
     fun testInitHttpServer() {
@@ -42,8 +61,9 @@ class TestHttpServer: BaseTestHttpServer() {
         val response = client.request(request)
         assertEquals(response.statusCode, HttpResponseStatus.ACCEPTED.code())
 
-
-        assertEquals(String(response.body), "echo hello")
+        response.body?.let {
+            assertEquals(it.string(), "echo hello")
+        } ?: assert(false) {"body should've exists"}
     }
 
 }
