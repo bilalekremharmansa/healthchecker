@@ -1,5 +1,6 @@
 package com.bilalekrem.healthcheck.netty.server
 
+import com.bilalekrem.healthcheck.util.JSON
 import io.netty.buffer.Unpooled
 import io.netty.handler.codec.http.*
 import java.nio.charset.Charset
@@ -17,6 +18,27 @@ class StringResponse(private val status: HttpResponseStatus,
 
     override fun response(request: FullHttpRequest): FullHttpResponse {
         val body = _response.toByteArray(charset = Charset.forName("UTF-8"))
+        val response = DefaultFullHttpResponse(
+                HttpVersion.HTTP_1_1,
+                status,
+                Unpooled.wrappedBuffer(body))
+
+        headers?.let {
+            response.headers().add(it)
+        }
+
+        return response
+    }
+
+}
+
+class JSONResponse(private val status: HttpResponseStatus,
+                     private val jsonResponse: String,
+                     private val headers: HttpHeaders? = null) : MockResponse(status, headers) {
+
+    override fun response(request: FullHttpRequest): FullHttpResponse {
+        val jsonNode = JSON.toJSONNode(jsonResponse)
+        val body = JSON.toJSON(jsonNode).toByteArray()
         val response = DefaultFullHttpResponse(
                 HttpVersion.HTTP_1_1,
                 status,

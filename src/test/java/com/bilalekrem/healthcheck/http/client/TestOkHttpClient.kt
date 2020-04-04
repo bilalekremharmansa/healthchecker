@@ -4,7 +4,7 @@ import com.bilalekrem.healthcheck.http.HttpRequest
 import com.bilalekrem.healthcheck.http.client.okhttp.OkHttpClient
 import com.bilalekrem.healthcheck.netty.BaseTestHttpServer
 import com.bilalekrem.healthcheck.netty.server.EchoResponse
-import com.bilalekrem.healthcheck.netty.server.StringResponse
+import com.bilalekrem.healthcheck.netty.server.JSONResponse
 import com.bilalekrem.healthcheck.util.JSON
 
 import io.netty.handler.codec.http.HttpMethod
@@ -19,7 +19,7 @@ class TestOkHttpClient: BaseTestHttpServer() {
 
     @Test
     fun testGetMethod() {
-        map(HttpMethod.GET, "/hello", StringResponse (
+        map(HttpMethod.GET, "/hello", JSONResponse (
                 HttpResponseStatus.OK, """{"echo":"hello"}"""
         ))
 
