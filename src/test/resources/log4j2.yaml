@@ -13,3 +13,8 @@ Configutation:
         level: info
         AppenderRef:
           - ref: ConsoleAppender
+      logger:
+        - name: com.bilalekrem.healthcheck
+          level: trace
+          AppenderRef:
+            - ref: ConsoleAppender

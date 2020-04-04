@@ -1,7 +1,6 @@
 package com.bilalekrem.healthcheck.http.client
 
 import com.bilalekrem.healthcheck.util.JSON
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import java.nio.charset.Charset
@@ -15,7 +14,7 @@ class HttpBody private constructor(val content: ByteArray) {
             return HttpBody(content)
         }
 
-        fun jsonBody(obj: Any): HttpBody {
+        fun objectToJsonBody(obj: Any): HttpBody {
             val json = JSON.toJSON(obj)
 
             return HttpBody(json.toByteArray())
@@ -27,11 +26,11 @@ class HttpBody private constructor(val content: ByteArray) {
 
     fun isEmpty() = length() == 0
 
-    fun <T : Any> toKotlinObject(clazz: KClass<T>): T {
+    fun <T : Any> jsonToObject(clazz: KClass<T>): T {
         return jacksonObjectMapper().readValue(content, clazz.java)
     }
 
-    inline fun <reified T> toKotlinObject(): T {
+    inline fun <reified T> jsonToObject(): T {
         return jacksonObjectMapper().readValue(content)
     }
 

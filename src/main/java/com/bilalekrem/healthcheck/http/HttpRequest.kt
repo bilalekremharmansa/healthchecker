@@ -24,9 +24,17 @@ class HttpRequest private constructor(
         fun header(name: String, value: String) = apply { this.headers.add(name, value) }
         fun body(body: HttpBody) = apply { this.body = body }
 
-        fun build() =
-                uri?.let { HttpRequest(method, it, timeout, headers, body) }
-                ?: throw RuntimeException("Uri is missing")
+        fun build(): HttpRequest {
+            if (method == HttpMethod.GET && body != null) {
+                throw RequestBodyIsNotPermittedException()
+            }
+
+            return uri?.let { HttpRequest(method, it, timeout, headers, body) }
+                    ?: throw RuntimeException("Uri is missing")
+        }
+
     }
 
 }
+
+class RequestBodyIsNotPermittedException(): RuntimeException("Body is not permitted for operation")

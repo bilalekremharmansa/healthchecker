@@ -1,18 +1,21 @@
 package com.bilalekrem.healthcheck.http.client
 
 import com.bilalekrem.healthcheck.http.HttpRequest
+import com.bilalekrem.healthcheck.http.RequestBodyIsNotPermittedException
 import com.bilalekrem.healthcheck.http.client.okhttp.OkHttpClient
 import com.bilalekrem.healthcheck.netty.server.EchoResponse
 import com.bilalekrem.healthcheck.netty.server.HttpTestServer
 import com.bilalekrem.healthcheck.netty.server.JSONResponse
 import com.bilalekrem.healthcheck.netty.server.MockResponse
 import com.bilalekrem.healthcheck.util.JSON
+
 import com.fasterxml.jackson.databind.JsonNode
 
 import io.netty.handler.codec.http.HttpMethod
 import io.netty.handler.codec.http.HttpResponseStatus
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
@@ -55,7 +58,7 @@ class TestOkHttpClient {
         assertEquals(response.statusCode, HttpResponseStatus.OK.code())
 
         response.body?.let {
-            val body = it.toKotlinObject<Map<String, String>>()
+            val body = it.jsonToObject<Map<String, String>>()
 
             // -- assert
 
@@ -73,7 +76,7 @@ class TestOkHttpClient {
         // --
 
         val bodyAsJsonNode = JSON.toJSONNode("""{"age":10,"name":"sample-class-to-json-de/serialization"}""")
-        val requestBody = HttpBody.jsonBody(bodyAsJsonNode)
+        val requestBody = HttpBody.objectToJsonBody(bodyAsJsonNode)
 
         val client = OkHttpClient()
         val request = HttpRequest.Builder()
@@ -87,7 +90,7 @@ class TestOkHttpClient {
         assertEquals(response.statusCode, HttpResponseStatus.OK.code())
 
         response.body?.let {
-            val body = it.toKotlinObject<JsonNode>()
+            val body = it.jsonToObject<JsonNode>()
             assertEquals(bodyAsJsonNode, body)
         } ?: assert(false) {"body should've exists"}
     }
@@ -101,7 +104,7 @@ class TestOkHttpClient {
         // --
 
         val bodyAsJsonNode = JSON.toJSONNode("""{"echo":"hello"}""")
-        val requestBody = HttpBody.jsonBody(bodyAsJsonNode)
+        val requestBody = HttpBody.objectToJsonBody(bodyAsJsonNode)
 
         val client = OkHttpClient()
         val request = HttpRequest.Builder()
@@ -115,6 +118,21 @@ class TestOkHttpClient {
 
         assertEquals(response.statusCode, HttpResponseStatus.OK.code())
         assertEquals(response.headers.get("HttpClient"), "OkHttp")
+    }
+
+    @Test
+    fun testGetRequestCannotHaveBody() {
+        val bodyAsJsonNode = JSON.toJSONNode("""{"echo":"hello"}""")
+        val requestBody = HttpBody.objectToJsonBody(bodyAsJsonNode)
+
+        val builder = HttpRequest.Builder()
+                .uri("http://127.0.0.1:$port/hello")
+                .method(com.bilalekrem.healthcheck.http.HttpMethod.GET)
+                .body(requestBody)
+                .header("HttpClient", "OkHttp")
+
+
+        assertThrows<RequestBodyIsNotPermittedException> {  builder.build() }
     }
 
 }

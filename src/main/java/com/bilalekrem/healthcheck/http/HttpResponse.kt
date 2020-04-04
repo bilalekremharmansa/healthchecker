@@ -2,7 +2,7 @@ package com.bilalekrem.healthcheck.http
 
 import com.bilalekrem.healthcheck.http.client.HttpBody
 
-data class HttpResponse(
+class HttpResponse(
         val statusCode: Int,
         val body: HttpBody?,
         val headers: HttpHeaders) {

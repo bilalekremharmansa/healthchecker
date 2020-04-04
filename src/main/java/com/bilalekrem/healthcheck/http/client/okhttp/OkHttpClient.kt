@@ -8,11 +8,13 @@ import okhttp3.OkHttpClient as ok_OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
+import org.apache.logging.log4j.LogManager
 
 class OkHttpClient: HttpClient {
 
+    private val logger = LogManager.getLogger()
+
     private val client: ok_OkHttpClient = ok_OkHttpClient()
-    companion object val EMPTY_REQUEST_BODY = "".toRequestBody()
 
     override fun get(request: HttpRequest): HttpResponse = doHttpRequest(request)
 
@@ -40,7 +42,7 @@ class OkHttpClient: HttpClient {
             HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE -> {
                 request.body?.let {
                     builder.method(request.method.name, it.content.toRequestBody())
-                } ?: builder.post(EMPTY_REQUEST_BODY)
+                } ?: logger.warn("empty body!")
             }
             else -> throw HttpMethodNotImplementedException(request.method)
         }
@@ -54,9 +56,12 @@ class OkHttpClient: HttpClient {
 
     private fun httpResponse(response: Response): HttpResponse {
         // map ( headerName -> headerName, headerValue )
+        logger.trace("OkHttp response is received...")
         val headers = HttpHeaders().apply {
             response.headers.names().forEach { headerName ->
-                this.add(headerName, response.headers[headerName]!!)
+                val headerValue = response.headers[headerName]!!
+                logger.trace("headers: $headerName -> $headerValue")
+                this.add(headerName, headerValue)
             }
         }
 
@@ -66,6 +71,7 @@ class OkHttpClient: HttpClient {
             // is this check required ?
             if (rawBody.isNotEmpty()) {
                 val body = HttpBody.fromByteArray(rawBody)
+                logger.trace("response has body: ${body.string()}")
 
                 return HttpResponse(response.code, body, headers)
             }

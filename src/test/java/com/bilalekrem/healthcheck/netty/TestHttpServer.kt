@@ -11,7 +11,6 @@ import io.netty.handler.codec.http.HttpMethod
 import io.netty.handler.codec.http.HttpResponseStatus
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test
-import java.nio.charset.Charset
 import kotlin.test.assertEquals
 
 class TestHttpServer {
