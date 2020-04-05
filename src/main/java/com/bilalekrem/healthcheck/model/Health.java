@@ -28,7 +28,7 @@ public class Health {
     // -- builder
 
     public static class Builder {
-        private HealthStatus status;
+        private HealthStatus status = HealthStatus.UNKNOWN;
         private List<Error> errors = new ArrayList<>(3);
 
         public Builder status(HealthStatus status) {
