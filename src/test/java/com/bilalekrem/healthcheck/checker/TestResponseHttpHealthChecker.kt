@@ -1,6 +1,10 @@
-package com.bilalekrem.healthcheck.http
+package com.bilalekrem.healthcheck.checker
 
 import com.bilalekrem.healthcheck.core.ResponseHttpHealthChecker
+import com.bilalekrem.healthcheck.http.HttpHeaders
+import com.bilalekrem.healthcheck.http.HttpMethod
+import com.bilalekrem.healthcheck.http.HttpRequest
+import com.bilalekrem.healthcheck.http.HttpResponse
 import com.bilalekrem.healthcheck.http.client.HttpBody
 import com.bilalekrem.healthcheck.model.HealthStatus
 import com.bilalekrem.healthcheck.model.TestGreetingObject
@@ -49,8 +53,7 @@ class TestResponseHttpHealthChecker {
 
     @Test
     fun testSuccess() {
-        val request = HttpRequest
-                .Builder()
+        val request = HttpRequest.Builder()
                 .uri("$BASE_URL/forSuccess")
                 .method(HttpMethod.GET)
                 .build()
@@ -67,8 +70,7 @@ class TestResponseHttpHealthChecker {
 
     @Test
     fun testFailForStatusCode() {
-        val request = HttpRequest
-                .Builder()
+        val request = HttpRequest.Builder()
                 .uri("$BASE_URL/forSuccess")
                 .method(HttpMethod.GET)
                 .build()
@@ -97,8 +99,7 @@ class TestResponseHttpHealthChecker {
     fun testFailForHeader() {
         val body = HttpBody.objectToJsonBody(TestGreetingObject("it is a success"))
 
-        val request = HttpRequest
-                .Builder()
+        val request = HttpRequest.Builder()
                 .uri("$BASE_URL/echo")
                 .method(HttpMethod.POST)
                 .header("test-header", "for-success")
@@ -108,7 +109,8 @@ class TestResponseHttpHealthChecker {
         val expectedResponse = HttpResponse(200, body,
                 HttpHeaders().apply {
                     add("test-header", "for-fail")
-                    add("missing-header", "fail") })
+                    add("missing-header", "fail")
+                })
 
         val checker = ResponseHttpHealthChecker(request, expectedResponse)
 
@@ -128,8 +130,7 @@ class TestResponseHttpHealthChecker {
 
     @Test
     fun testFailForBody() {
-        val request = HttpRequest
-                .Builder()
+        val request = HttpRequest.Builder()
                 .uri("$BASE_URL/forSuccess")
                 .method(HttpMethod.GET)
                 .build()

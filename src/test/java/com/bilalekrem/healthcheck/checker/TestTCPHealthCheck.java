@@ -1,4 +1,4 @@
-package com.bilalekrem.healthcheck.tcp;
+package com.bilalekrem.healthcheck.checker;
 
 import com.bilalekrem.healthcheck.core.HealthChecker;
 import com.bilalekrem.healthcheck.core.TCPHealthChecker;

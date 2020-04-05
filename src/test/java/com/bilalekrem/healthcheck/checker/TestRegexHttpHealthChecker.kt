@@ -1,15 +1,13 @@
-package com.bilalekrem.healthcheck.http
+package com.bilalekrem.healthcheck.checker
 
 import com.bilalekrem.healthcheck.core.RegexHttpHealthChecker
-import com.bilalekrem.healthcheck.core.ResponseHttpHealthChecker
+import com.bilalekrem.healthcheck.http.HttpRequest
 import com.bilalekrem.healthcheck.http.client.HttpBody
 import com.bilalekrem.healthcheck.model.HealthStatus
 import com.bilalekrem.healthcheck.model.TestGreetingObject
 import com.bilalekrem.healthcheck.netty.server.EchoResponse
 import com.bilalekrem.healthcheck.netty.server.HttpTestServer
-import com.bilalekrem.healthcheck.netty.server.JSONResponse
 import io.netty.handler.codec.http.HttpMethod
-import io.netty.handler.codec.http.HttpResponseStatus
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -45,8 +43,7 @@ class TestRegexHttpHealthChecker {
     fun testSuccess() {
         val body = HttpBody.objectToJsonBody(TestGreetingObject("it is a success"))
 
-        val request = HttpRequest
-                .Builder()
+        val request = HttpRequest.Builder()
                 .uri("${TestResponseHttpHealthChecker.BASE_URL}/echo")
                 .method(com.bilalekrem.healthcheck.http.HttpMethod.POST)
                 .body(body)
@@ -64,8 +61,7 @@ class TestRegexHttpHealthChecker {
     fun testFail() {
         val body = HttpBody.objectToJsonBody(TestGreetingObject("it is a success"))
 
-        val request = HttpRequest
-                .Builder()
+        val request = HttpRequest.Builder()
                 .uri("${TestResponseHttpHealthChecker.BASE_URL}/echo")
                 .method(com.bilalekrem.healthcheck.http.HttpMethod.POST)
                 .body(body)
@@ -82,8 +78,7 @@ class TestRegexHttpHealthChecker {
 
     @Test
     fun testFailForEmptyBody() {
-        val request = HttpRequest
-                .Builder()
+        val request = HttpRequest.Builder()
                 .uri("${TestResponseHttpHealthChecker.BASE_URL}/echo")
                 .method(com.bilalekrem.healthcheck.http.HttpMethod.POST)
                 .build()
