@@ -8,48 +8,15 @@ import com.bilalekrem.healthcheck.http.HttpResponse
 import com.bilalekrem.healthcheck.http.client.HttpBody
 import com.bilalekrem.healthcheck.model.HealthStatus
 import com.bilalekrem.healthcheck.model.TestGreetingObject
-import com.bilalekrem.healthcheck.netty.server.EchoResponse
-import com.bilalekrem.healthcheck.netty.server.HttpTestServer
-import com.bilalekrem.healthcheck.netty.server.JSONResponse
-import io.netty.handler.codec.http.HttpMethod as NettyHttpMethod
-import io.netty.handler.codec.http.HttpResponseStatus
+
 import org.apache.logging.log4j.LogManager
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+
 import kotlin.test.assertEquals
 
-class TestResponseHttpHealthChecker {
+class TestResponseHttpHealthChecker: BaseTestHttpHealthChecker() {
 
     private val logger = LogManager.getLogger()
-
-    companion object {
-
-        private val server = HttpTestServer()
-
-        const val PORT = 9999
-        const val BASE_URL = "http://127.0.0.1:$PORT"
-
-        @JvmStatic
-        @BeforeAll
-        fun initServer() {
-            server.start(PORT)
-
-            server.map(NettyHttpMethod.GET, "/forSuccess", JSONResponse(
-                    HttpResponseStatus.OK, """{"message": "it is a success" }""")
-            )
-
-            server.map(NettyHttpMethod.GET, "/echo", EchoResponse())
-            server.map(NettyHttpMethod.POST, "/echo", EchoResponse())
-        }
-
-        @AfterAll
-        @JvmStatic
-        fun closeServer() {
-            server.close()
-        }
-
-    }
 
     @Test
     fun testSuccess() {
