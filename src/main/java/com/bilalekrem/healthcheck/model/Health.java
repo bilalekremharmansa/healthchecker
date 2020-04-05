@@ -49,7 +49,7 @@ public class Health {
             }
 
             if (status == HealthStatus.HEALTHY && errors.size() > 0) {
-                throw new IllegalStateException("can not be healthy while having existing errors");
+                throw new IllegalStateException("status not be healthy while having existing errors");
             }
 
             return new Health(status, errors);
