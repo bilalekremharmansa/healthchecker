@@ -15,6 +15,6 @@ Configutation:
           - ref: ConsoleAppender
       logger:
         - name: com.bilalekrem.healthcheck
-          level: trace
+          level: debug
           AppenderRef:
             - ref: ConsoleAppender

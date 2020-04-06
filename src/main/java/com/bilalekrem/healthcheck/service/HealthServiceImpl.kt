@@ -10,26 +10,34 @@ import kotlinx.coroutines.withTimeoutOrNull
 import org.apache.logging.log4j.LogManager
 import java.util.concurrent.atomic.AtomicBoolean
 
-class HealthContext(val name: String,
-                    private val healthChecker: HealthChecker,
-                    private val interval: Long = 1000, // interval between health checks
-                    private val timeout: Long = 10000, // default 10s
-                    var health: Health = Health.builder().build()) {
+/*
+* Kotlin coroutine implementation of HealthService
+* */
+class HealthServiceImpl(name: String,
+                        healthChecker: HealthChecker,
+                        interval: Long = 1000, // interval between health checks
+                        timeout: Long = 10000, // default 10s
+                        health: Health = Health.builder().build())
+    : AbstractHealthService(name, healthChecker, interval, timeout, health) {
 
     private val logger = LogManager.getLogger()
 
     private var lastCheckedStatus: Long = 0
     private val allowCheck = AtomicBoolean()
 
-    fun start() {
-        allowCheck.set(true)
+    override fun start() {
+        if (!allowCheck.get()) {
+            allowCheck.set(true)
 
-        checkContinuously()
+            checkContinuously()
+        }
     }
 
-    fun stop() {
+    override fun stop() {
         allowCheck.set(false)
     }
+
+    override fun status(): HealthStatus = health.status
 
     private fun checkContinuously() {
         GlobalScope.launch {
@@ -51,8 +59,6 @@ class HealthContext(val name: String,
             }
         }
     }
-
-    fun status(): HealthStatus = health.status
 
     private fun updateHealth(health: Health) {
         this.health = health
