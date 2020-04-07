@@ -19,3 +19,16 @@ definitions:
           - name: header2
             value: headerValue2
       pattern: myregex
+  - name: regex-sample2
+    interval: 100
+    checker:
+      type: regex
+      request:
+        uri: 127.0.0.1
+        method: GET
+        headers:
+          - name: header1
+            value: headerValue
+          - name: header2
+            value: headerValue2
+      pattern: myregex

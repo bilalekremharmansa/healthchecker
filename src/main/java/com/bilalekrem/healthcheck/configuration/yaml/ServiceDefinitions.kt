@@ -7,20 +7,18 @@ import com.bilalekrem.healthcheck.http.HttpMethod
 import com.bilalekrem.healthcheck.http.HttpRequest
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 
-data class Properties(
-    val definitions: List<ServiceProperties>
+data class ConfigurationWrapper(
+    val definitions: List<ServiceDefinitions> = listOf()
 )
 
-data class ServiceProperties(
+data class ServiceDefinitions(
         val name: String,
         val interval: Long = 1000,
+        val timeout: Long = 1000,
         val checker: HealthCheckerProperties<HealthChecker>
 )
 
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION,
-        AnnotationTarget.VALUE_PARAMETER)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class HealthCheckerConfiguration(val typeName: String)
+// -- Base health checker
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 abstract class HealthCheckerProperties<T: HealthChecker>() {
@@ -28,6 +26,26 @@ abstract class HealthCheckerProperties<T: HealthChecker>() {
     abstract fun createChecker(): T
 
 }
+
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION,
+        AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class HealthCheckerConfiguration(val typeName: String)
+
+// -- TCP Health Checker
+
+@HealthCheckerConfiguration(typeName = "tcp")
+class TCPHealthCheckerProperties (private val ip: String,
+                                  private val port: Int,
+                                  private val timeout: Int? = null): HealthCheckerProperties<TCPHealthChecker>() {
+
+    override fun createChecker(): TCPHealthChecker {
+        return timeout?.let { TCPHealthChecker(ip, port, timeout)  } ?: TCPHealthChecker(ip, port)
+    }
+
+}
+
+// --- Http Health Checker
 
 class HttpRequestProperties(val uri: String,
                             val method: HttpMethod,
@@ -51,18 +69,3 @@ class RegexHttpHealthCheckerProperties(private val request: HttpRequestPropertie
     }
 
 }
-
-
-@HealthCheckerConfiguration(typeName = "tcp")
-class TCPHealthCheckerProperties (private val ip: String,
-                                 private val port: Int,
-                                 private val timeout: Int? = null): HealthCheckerProperties<TCPHealthChecker>() {
-
-    override fun createChecker(): TCPHealthChecker {
-        return timeout?.let { TCPHealthChecker(ip, port, timeout)  } ?: TCPHealthChecker(ip, port)
-    }
-
-}
-
-
-
