@@ -14,11 +14,12 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import org.apache.logging.log4j.LogManager
 import org.reflections.Reflections
+import org.slf4j.LoggerFactory
 
+class Main
 fun main(args: Array<String>) {
-    val logger = LogManager.getLogger()
+    val logger = LoggerFactory.getLogger(Main::class.java)
 
     val port = System.getProperty("server.port", "8080").toInt();
     logger.info("Server is listening from [:$port]")

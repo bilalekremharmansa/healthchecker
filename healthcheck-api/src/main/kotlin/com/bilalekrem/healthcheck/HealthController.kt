@@ -3,12 +3,12 @@ package com.bilalekrem.healthcheck
 import com.bilalekrem.healthcheck.configuration.ServiceDefinitions
 import com.bilalekrem.healthcheck.service.HealthService
 import com.bilalekrem.healthcheck.service.HealthServiceImpl
-import org.apache.logging.log4j.LogManager
+import org.slf4j.LoggerFactory
 import java.lang.RuntimeException
 
 class HealthController {
+    private val logger = LoggerFactory.getLogger(HealthController::class.java)
 
-    private val logger = LogManager.getLogger()
     private val services = mutableMapOf<String, HealthService>()
 
     fun create(service: ServiceDefinitions, startOnCreate: Boolean = false) {

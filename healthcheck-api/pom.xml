@@ -15,9 +15,8 @@
         <kotlin.version>1.3.71</kotlin.version>
         <junit.version>4.12</junit.version>
         <ktor.version>1.3.2</ktor.version>
-        <log4j.version>2.13.1</log4j.version>
         <reflections.version>0.9.10</reflections.version>
-        <reflections.version>0.9.10</reflections.version>
+        <logback.version>1.2.3</logback.version>
     </properties>
 
     <dependencies>
@@ -68,15 +67,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${log4j.version}</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
         </dependency>
 
         <dependency>
@@ -120,7 +113,8 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <finalName>healthcheck-api.jar</finalName>
+                    <finalName>healthcheck-api</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
