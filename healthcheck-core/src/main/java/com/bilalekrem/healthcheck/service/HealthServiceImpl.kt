@@ -54,7 +54,7 @@ class HealthServiceImpl(name: String,
                     logger.warn("timeout while health checking")
                 }
 
-                println("[$name] ${health.status} $lastCheckedStatus")
+                logger.trace("Health status of[$name]: ${health.status} [$lastCheckedStatus]")
                 delay(interval)
             }
 

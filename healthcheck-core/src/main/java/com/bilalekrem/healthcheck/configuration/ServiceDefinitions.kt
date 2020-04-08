@@ -1,4 +1,4 @@
-package com.bilalekrem.healthcheck.configuration.yaml
+package com.bilalekrem.healthcheck.configuration
 
 import com.bilalekrem.healthcheck.core.HealthChecker
 import com.bilalekrem.healthcheck.core.RegexHttpHealthChecker

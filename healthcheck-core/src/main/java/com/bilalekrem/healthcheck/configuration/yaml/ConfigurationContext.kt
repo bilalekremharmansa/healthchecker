@@ -1,5 +1,9 @@
 package com.bilalekrem.healthcheck.configuration.yaml
 
+import com.bilalekrem.healthcheck.configuration.ConfigurationWrapper
+import com.bilalekrem.healthcheck.configuration.HealthCheckerConfiguration
+import com.bilalekrem.healthcheck.configuration.HealthCheckerProperties
+import com.bilalekrem.healthcheck.configuration.ServiceDefinitions
 import com.bilalekrem.healthcheck.service.HealthServiceImpl
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.jsontype.NamedType
