@@ -1,9 +1,9 @@
 # idea
-.idea/**
-healthcheck.iml
+*/.idea/**
+*/*.iml
 
 # build
-target/**
+*/target/**
 
 # logs
-logs/**
+*/logs/**
