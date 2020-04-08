@@ -57,6 +57,9 @@ class HealthServiceImpl(name: String,
                 println("[$name] ${health.status} $lastCheckedStatus")
                 delay(interval)
             }
+
+            // set unknown before exiting..
+            updateHealth(Health.builder().build())
         }
     }
 

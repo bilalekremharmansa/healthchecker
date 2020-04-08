@@ -1,0 +1,34 @@
+definitions:
+  - name: tcp-sample
+    interval: 100
+    checker:
+        type: tcp
+        ip: bilal
+        port: 10
+        timeout: 1000
+  - name: regex-sample
+    interval: 100
+    checker:
+      type: regex
+      request:
+        uri: 127.0.0.1
+        method: GET
+        headers:
+          - name: header1
+            value: headerValue
+          - name: header2
+            value: headerValue2
+      pattern: myregex
+  - name: regex-sample2
+    interval: 100
+    checker:
+      type: regex
+      request:
+        uri: 127.0.0.1
+        method: GET
+        headers:
+          - name: header1
+            value: headerValue
+          - name: header2
+            value: headerValue2
+      pattern: myregex
