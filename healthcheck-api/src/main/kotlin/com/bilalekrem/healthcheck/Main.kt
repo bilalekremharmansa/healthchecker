@@ -14,10 +14,16 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import org.apache.logging.log4j.LogManager
 import org.reflections.Reflections
 
 fun main(args: Array<String>) {
-    val server = embeddedServer(Netty, port = 8080) {
+    val logger = LogManager.getLogger()
+
+    val port = System.getProperty("server.port", "8080").toInt();
+    logger.info("Server is listening from [:$port]")
+
+    val server = embeddedServer(Netty, port = port) {
 
         install(ContentNegotiation) {
             registerJackson()
@@ -25,7 +31,7 @@ fun main(args: Array<String>) {
 
         install(StatusPages) {
             exception<Throwable> { cause ->
-                val response = "${cause.message}\n" ?: "${HttpStatusCode.BadRequest}\n"
+                val response = "${cause.message ?: "${HttpStatusCode.BadRequest}"}\n"
                 call.respond(response)
             }
         }
