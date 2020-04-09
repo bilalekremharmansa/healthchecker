@@ -43,7 +43,7 @@ fun main(args: Array<String>) {
         routing {
             post("/create") {
                 val a = call.receive<ServiceDefinitions>()
-                val startOnCreate: Boolean = call.request.queryParameters["start"]?.let { it == "true" } ?: false
+                val startOnCreate: Boolean = call.request.queryParameters["start"]?.let { it == "false" } ?: true
 
                 controller.create(a, startOnCreate)
 

@@ -11,7 +11,7 @@ class HealthController {
 
     private val services = mutableMapOf<String, HealthService>()
 
-    fun create(service: ServiceDefinitions, startOnCreate: Boolean = false) {
+    fun create(service: ServiceDefinitions, startOnCreate: Boolean = true) {
         services[service.name]
                 ?.let {
                     logger.error("service already defined: [$service.name]")
