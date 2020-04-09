@@ -4,6 +4,10 @@
 
 # build
 */target/**
+*/build/**
 
 # logs
 */logs/**
+
+# gradle
+*/.gradle/**
