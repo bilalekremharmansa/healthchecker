@@ -78,11 +78,11 @@ By default, the application will expose port 8080, so change this within the Doc
 
 For build a container image
 ```sh
-$ cd healthchecker-api
+$ cd healthchecker
 $ docker build -t healthchecker:${version} .
 ```
 
-You're ready to run a container
+You're ready to run the container
 ```sh
 $ docker run -d --rm -p 10000:8080 healthchecker:${version}
 ```
