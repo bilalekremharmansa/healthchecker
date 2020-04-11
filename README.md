@@ -34,8 +34,46 @@ Exposes healthchecker-core functionality as an API, which is build with Ktor.
 | PUT | stop/{name} | stops health service of given `name` |
 | GET | status/{name} | returns health of given service `name`  |
 
+### Usage
 
-### Build and Installation
+You can pull healthchecker container image from docker hub. 
+
+```sh
+$ docker pull bilalekremharmansa/healthchecker:v1.0.0
+```
+
+You're ready to run the container. By default, the application will expose port 8080, to expose port 10000 by mapping to containers port 8080
+
+```sh
+$ docker run -d --rm -p 10000:8080 bilalekremharmansa/healthchecker:${version}
+```
+
+Let's create a service definition and check availability of a service
+
+```sh
+$ curl -XPOST 127.0.0.1:10000/create -d '{"name": "sample", "interval": 2000, "checker": { "type": "tcp", "ip": "127.0.0.1", "port": 20000, "timeout": 1000}}' -H "Content-Type: application/json"
+```
+
+Container is running now... We can query health status of the service by
+```sh
+$ curl 127.0.0.1:10000/status/sample -H "Content-Type: application/json"
+{"data":"UNHEALTHY","status":true}
+```
+
+UNHEALTHY as expected. Now let netcat listens on TCP port `20000` which healthchecker is currently checking
+
+```sh
+$ nc -kl 20000
+```
+
+If, now, we query healthchecker, result would be a HEALTHY service
+
+```sh
+$ curl 127.0.0.1:10000/status/sample -H "Content-Type: application/json"
+{"data":"HEALTHY","status":true}
+```
+
+### Build
 
 healthchecker requires Kotlin 1.3.71 and Java 8.
 
@@ -44,6 +82,14 @@ maven is main build tool for healthchecker. Building can be done in healthchecke
 ```sh
 $ cd healthchecker-parent
 $ mvn clean package
+```
+
+Alternatively, build a docker container image 
+
+```sh
+$ cd healthchecker
+$ docker build -t healthchecker:${version} .
+$ docker pull healthchecker:{version}
 ```
 
 ### Development
@@ -68,48 +114,6 @@ then you need a class for configuration
 class CustomHealthChecker (val args...): HealthCheckerProperties<CustomHealthChecker>() {
     override fun createChecker(): CustomHealthChecker = CustomHealthChecker()
 }
-```
-
-### Usage
-
-Install and deploy healthchecker in a Docker container.
-
-By default, the application will expose port 8080, so change this within the Dockerfile if necessary. Also, you can set ```server.port``` JVM option to change port.
-
-For build a container image
-```sh
-$ cd healthchecker
-$ docker build -t healthchecker:${version} .
-```
-
-You're ready to run the container
-```sh
-$ docker run -d --rm -p 10000:8080 healthchecker:${version}
-```
-
-Let's create a service definition and check availability of a service
-
-```sh
-$ curl -XPOST 127.0.0.1:10000/create -d '{"name": "sample", "interval": 2000, "checker": { "type": "tcp", "ip": "127.0.0.1", "port": 20000, "timeout": 1000}}' -H "Content-Type: application/json"
-```
-
-Container is running now... We can query health status of the service by
-```sh
-$ curl 127.0.0.1:10000/status/sample -H "Content-Type: application/json"
-{"data":"UNHEALTHY","status":true}
-```
-
-UNHEALTHY as expected. Now let netcat listens on TCP port `20000` which healthchecker is currently checking
-
-```sh
-$ nc -kl 20000
-```
-
-If we query now healthchecker we will see a HEALTHY service
-
-```sh
-$ curl 127.0.0.1:10000/status/sample -H "Content-Type: application/json"
-{"data":"HEALTHY","status":true}
 ```
 
 ### Todos
