@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 group = "com.bilalekrem.healthcheck"
-version = "1.0-SNAPSHOT"
+version = "1.0.0"
 
 val ktor_version = "1.3.2"
 val logback_version = "1.2.3"
@@ -37,7 +37,7 @@ repositories {
 
 dependencies {
     compile(kotlin("stdlib-jdk8"))
-    compile(group="com.bilalekrem.healthcheck", name= "healthcheck-core", version ="1.0-SNAPSHOT")
+    compile(group="com.bilalekrem.healthcheck", name= "healthcheck-core", version ="1.0.0")
     compile("io.ktor:ktor-server-netty:$ktor_version")
     implementation("io.ktor:ktor-jackson:$ktor_version")
     compile("ch.qos.logback:logback-classic:$logback_version")
