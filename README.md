@@ -45,13 +45,14 @@ $ docker pull bilalekremharmansa/healthchecker:v1.0.0
 You're ready to run the container. By default, the application will expose port 8080, to expose port 10000 by mapping to containers port 8080
 
 ```sh
-$ docker run -d --rm -p 10000:8080 bilalekremharmansa/healthchecker:${version}
+$ docker run -d --rm -p 10000:8080 bilalekremharmansa/healthchecker:v1.0.0
 ```
 
 Let's create a service definition and check availability of a service
 
 ```sh
-$ curl -XPOST 127.0.0.1:10000/create -d '{"name": "sample", "interval": 2000, "checker": { "type": "tcp", "ip": "127.0.0.1", "port": 20000, "timeout": 1000}}' -H "Content-Type: application/json"
+$ ip_addr=$(ipconfig getifaddr en0) # ip address of your local machine in this case
+$ curl -XPOST 127.0.0.1:10000/create -H "Content-Type: application/json" -d "{\"name\": \"sample\", \"interval\": 2000, \"checker\": { \"type\": \"tcp\", \"ip\": \"$ip_addr\", \"port\": 20000, \"timeout\": 1000}}"
 ```
 
 Container is running now... We can query health status of the service by
@@ -60,13 +61,13 @@ $ curl 127.0.0.1:10000/status/sample -H "Content-Type: application/json"
 {"data":"UNHEALTHY","status":true}
 ```
 
-UNHEALTHY as expected. Now let netcat listens on TCP port `20000` which healthchecker is currently checking
+`UNHEALTHY` as expected. Now let netcat listens on TCP port `20000` which healthchecker is currently checking
 
 ```sh
 $ nc -kl 20000
 ```
 
-If, now, we query healthchecker, result would be a HEALTHY service
+If, now, we query healthchecker, result would be a `HEALTHY` service
 
 ```sh
 $ curl 127.0.0.1:10000/status/sample -H "Content-Type: application/json"
